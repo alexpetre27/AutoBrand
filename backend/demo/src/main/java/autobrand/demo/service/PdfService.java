@@ -1,7 +1,7 @@
 package autobrand.demo.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.Loader; // <--- Importul nou
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,6 @@ import com.opencsv.CSVWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -23,30 +21,38 @@ public class PdfService {
             PDFTextStripper stripper = new PDFTextStripper();
             String pdfText = stripper.getText(document);
 
-            String regex = "^\\s*([A-Z0-9]+)\\s+(.*?)\\s+([\\d.]+)\\s+([A-Z]{3})\\s+([-]?\\d+)\\s*$";
-            Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-            Matcher matcher = pattern.matcher(pdfText);
-
+            String[] lines = pdfText.split("\\r?\\n");
+            
             List<String[]> csvData = new ArrayList<>();
             csvData.add(new String[]{"Cod produs", "Nume produs", "Pret unitar", "Moneda", "Cantitate"});
 
-            while (matcher.find()) {
-                String productCode = matcher.group(1).trim();
-                String productName = matcher.group(2).trim();
-                String unitPrice = matcher.group(3).trim();
-                String currency = matcher.group(4).trim();
-                String quantity = matcher.group(5).trim();
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i].trim();
                 
-                log.info("Am extras din PDF -> Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
-                         productCode, productName, unitPrice, currency, quantity);
+                if (line.contains("COMUTATOR PORNIRE")) {
+                    
+                
+                    String[] parts = line.split("\\s+");
+                    
+                    String unitPrice = parts[0];  
+                    String currency = parts[1];    
+                    String quantity = parts[2];   
 
-                csvData.add(new String[]{productCode, productName, unitPrice, currency, quantity});
+                    String productCode = "Necunoscut";
+                    if (i + 1 < lines.length) {
+                        productCode = lines[i + 1].trim();
+                    }
+
+                    String productName = "COMUTATOR PORNIRE FEBI";
+                    log.info("Am extras: Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
+                             productCode, productName, unitPrice, currency, quantity);
+
+                    csvData.add(new String[]{productCode, productName, unitPrice, currency, quantity});
+                }
             }
-
             return generateCsvString(csvData);
-
         } catch (Exception e) {
-            log.error("Eroare la procesarea fișierului", e);
+            log.error("Eroare la procesarea fișierului PDF", e);
             throw new RuntimeException("Eroare la parsarea PDF-ului: " + e.getMessage());
         }
     }

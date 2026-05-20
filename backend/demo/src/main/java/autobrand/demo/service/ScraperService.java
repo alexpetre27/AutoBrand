@@ -39,9 +39,7 @@ public class ScraperService {
                     .method(Connection.Method.POST)
                     .ignoreContentType(true)
                     .execute();
-
             Map<String, String> cookies = loginResponse.cookies();
-
             Document doc = Jsoup.connect("https://www.web-scraping.dev/products?category=consumables")
                     .cookies(cookies)
                     .get();
@@ -51,19 +49,16 @@ public class ScraperService {
             for (Element element : productElements) {
                 String name = element.select("a").first() != null ? element.select("a").first().text() : "";
                 String priceText = element.select(".price").text();
-                
                 String rawDescription = element.select(".short-description, .description, div[class*='desc']").text();
-                if (rawDescription.isEmpty()) {
-                    rawDescription = element.select("p").first() != null ? element.select("p").first().text() : "";
-                }
-                
                 String description = rawDescription.replace(name, "").trim();
                 String imageUrl = element.select("img.img-thumbnail").attr("src");
-
                 String cleanPrice = priceText.replaceAll("[^0-9.]", "");
                 Double priceUsd = cleanPrice.isEmpty() ? 0.0 : Double.parseDouble(cleanPrice);
                 Double priceRon = priceUsd * exchangeRate;
 
+                 if (rawDescription.isEmpty()) {
+                    rawDescription = element.select("p").first() != null ? element.select("p").first().text() : "";
+                }
                 if (!name.isEmpty() && productRepository.findByName(name).isEmpty()) {
                     Product newProduct = Product.builder()
                             .name(name)
@@ -73,7 +68,6 @@ public class ScraperService {
                             .description(description)
                             .imageUrl(imageUrl)
                             .build();
-
                     productRepository.save(newProduct);
                     log.info("Obiect salvat: {} | $: {} | RON: {}", name, priceUsd, String.format("%.2f", priceRon));
                 }
@@ -83,7 +77,6 @@ public class ScraperService {
             log.error("Eroare in procesul de scraping", e);
         }
     }
-
     private double fetchUsdToRonRate() {
         try {
             String jsonResponse = Jsoup.connect("https://open.er-api.com/v6/latest/USD")

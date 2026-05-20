@@ -29,7 +29,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 via-[#0a0a0a] to-black flex items-center justify-center p-6">
+    <main className="min-h-screen bg-gray-800 flex items-center justify-center p-6">
       <div className="w-full max-w-sm p-8 rounded-2xl border border-slate-700/50 bg-slate-900/40 shadow-2xl backdrop-blur-md">
         <h1 className="text-xl font-bold text-white mb-6 text-center tracking-wide">
           Autentificare

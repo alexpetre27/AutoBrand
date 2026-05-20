@@ -3,17 +3,14 @@ import { useState } from "react";
 
 export default function PdfUploader() {
   const [file, setFile] = useState<File | null>(null);
-
   const handleUpload = async () => {
     if (!file) return;
     const formData = new FormData();
     formData.append("file", file);
-
     const res = await fetch("http://localhost:8081/api/pdf/upload", {
       method: "POST",
       body: formData,
     });
-
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -31,7 +28,7 @@ export default function PdfUploader() {
       />
       <button
         onClick={handleUpload}
-        className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg text-sm font-medium transition"
+        className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 py-3  rounded-lg text-sm font-medium transition "
       >
         Descarca factura
       </button>

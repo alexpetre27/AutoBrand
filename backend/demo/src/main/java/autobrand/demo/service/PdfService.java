@@ -53,7 +53,7 @@ public class PdfService {
                         productName = productName.replaceAll("\\d+$", "").trim();
                     }
 
-                    log.info("AM GASIT PRODUS DINAMIC: Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
+                    log.info(" Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
                              productCode, productName, unitPrice, currency, quantity);
 
                     csvData.add(new String[]{productCode, productName, unitPrice, currency, quantity});

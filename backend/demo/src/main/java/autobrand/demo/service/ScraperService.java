@@ -28,7 +28,7 @@ public class ScraperService {
     @Scheduled(cron = "0 0 12-18 * * *")
     public void runScraperHourly() {
         log.info("Cron a inceput");
-        productRepository.deleteAll();
+        
         try {
             double exchangeRate = fetchUsdToRonRate();
             log.info("Cursul valutar: 1 USD = {} RON", exchangeRate);
@@ -51,7 +51,13 @@ public class ScraperService {
             for (Element element : productElements) {
                 String name = element.select("a").first() != null ? element.select("a").first().text() : "";
                 String priceText = element.select(".price").text();
-                String description = element.select(".short-description").text();
+                
+                String rawDescription = element.select(".short-description, .description, div[class*='desc']").text();
+                if (rawDescription.isEmpty()) {
+                    rawDescription = element.select("p").first() != null ? element.select("p").first().text() : "";
+                }
+                
+                String description = rawDescription.replace(name, "").trim();
                 String imageUrl = element.select("img.img-thumbnail").attr("src");
 
                 String cleanPrice = priceText.replaceAll("[^0-9.]", "");
@@ -69,12 +75,12 @@ public class ScraperService {
                             .build();
 
                     productRepository.save(newProduct);
-                    log.info("SALVAT: {} | $: {} | RON: {}", name, priceUsd, String.format("%.2f", priceRon));
+                    log.info("Obiect salvat: {} | $: {} | RON: {}", name, priceUsd, String.format("%.2f", priceRon));
                 }
             }
             log.info("Cron a fost finalizat");
         } catch (Exception e) {
-            log.error("Eroare în procesul de scraping sau de conversie", e);
+            log.error("Eroare in procesul de scraping", e);
         }
     }
 
@@ -88,8 +94,7 @@ public class ScraperService {
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
             return rootNode.path("rates").path("RON").asDouble();
         } catch (Exception e) {
-            log.warn("Nu am putut prelua cursul curent, folosim valoarea de rezerva");
-            return 4.55;
+            return 4.50;
         }
     }
 }

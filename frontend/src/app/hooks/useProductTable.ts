@@ -31,19 +31,26 @@ export const useProductTable = () => {
     });
     if (res.ok) setProducts((prev) => prev.filter((p) => p.id !== id));
   };
-
   const handleSave = async (id: number) => {
+    const productToUpdate = filteredAndSorted.find((p) => p.id === id);
+
+    if (!productToUpdate) return;
+
     const res = await fetch(`http://localhost:8081/api/products/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: editName, price: editPrice }),
+      body: JSON.stringify({
+        name: editName,
+        price: editPrice,
+        description: productToUpdate.description,
+      }),
     });
+
     if (res.ok) {
       setEditingId(null);
       fetchProducts();
     }
   };
-
   const toggleDescription = (id: number) => {
     setExpandedDescIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],

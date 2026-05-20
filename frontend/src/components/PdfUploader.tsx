@@ -1,27 +1,75 @@
 "use client";
 
+import { useState } from "react";
 import { usePdfUploader } from "@/app/hooks/usePdfUploader";
+import { FileText, Info, X } from "lucide-react";
 
 export default function PdfUploader() {
   const { setFile, handleUpload, isUploading } = usePdfUploader();
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setFile(file);
+    setSelectedFileName(file ? file.name : null);
+  };
+
+  const clearFile = () => {
+    setFile(null);
+    setSelectedFileName(null);
+  };
 
   return (
-    <div className="p-6 border border-neutral-800 bg-neutral-900/50 rounded-xl">
-      <input
-        type="file"
-        onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-        className="block w-full text-sm text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer"
-      />
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-2">
+        <div className="flex items-center justify-between gap-4">
+          {/* Am transformat label-ul într-un wrapper care ocupă tot spațiul disponibil pentru a crește hitbox-ul */}
+          <label className="flex items-center gap-3 min-w-0 flex-1 cursor-pointer p-2 rounded-xl hover:bg-neutral-100 transition-colors">
+            <input type="file" onChange={handleFileChange} className="hidden" />
+
+            <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200 flex items-center justify-center flex-shrink-0">
+              <FileText className="w-5 h-5 text-neutral-400" />
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-neutral-900 truncate">
+                {selectedFileName || "Alege un fișier PDF"}
+              </p>
+              <p className="text-xs text-neutral-400">
+                {selectedFileName
+                  ? "Fișier selectat"
+                  : "Click pentru a încărca"}
+              </p>
+            </div>
+          </label>
+
+          {/* Butonul X rămâne în afara label-ului pentru a nu declanșa input-ul */}
+          {selectedFileName && (
+            <button
+              onClick={clearFile}
+              className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 text-neutral-400 text-xs px-1">
+        <Info className="w-3 h-3" />
+        <span>Documentele PDF sunt procesate securizat.</span>
+      </div>
+
       <button
         onClick={handleUpload}
-        disabled={isUploading}
-        className={`mt-4 w-full py-3 rounded-lg text-sm font-medium transition ${
-          isUploading
-            ? "bg-neutral-700 cursor-not-allowed"
-            : "bg-indigo-600 hover:bg-indigo-500"
+        disabled={isUploading || !selectedFileName}
+        className={`w-full h-12 rounded-xl text-white font-medium transition-all ${
+          isUploading || !selectedFileName
+            ? "bg-neutral-300 cursor-not-allowed"
+            : "bg-neutral-900 hover:bg-black shadow-md hover:shadow-lg"
         }`}
       >
-        {isUploading ? "Se procesează..." : "Descarcă factura"}
+        {isUploading ? "Se procesează..." : "Extrage produsele"}
       </button>
     </div>
   );

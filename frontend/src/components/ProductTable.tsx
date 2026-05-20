@@ -1,6 +1,7 @@
 "use client";
 
 import { useProductTable } from "@/app/hooks/useProductTable";
+import { Pencil, Search, Trash2, Check } from "lucide-react";
 
 export default function ProductTable() {
   const {
@@ -22,95 +23,96 @@ export default function ProductTable() {
   } = useProductTable();
 
   return (
-    <div className="w-full space-y-6">
-      <input
-        placeholder="Caută produs"
-        className="w-full bg-neutral-900/50 border border-white/5 p-3 rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-indigo-500/50 transition-all shadow-lg backdrop-blur-md"
-        onChange={(e) => setSearch(e.target.value)}
-      />
+    <div className="space-y-4">
+      <div className="relative w-full max-w-xs">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black-300" />
+        <input
+          placeholder="Caută"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full h-10 rounded-xl border border-neutral-200 bg-white pl-10 pr-4 text-sm text-neutral-900 placeholder:text-neutral-400 outline-none focus:border-neutral-400 transition-all"
+        />
+      </div>
 
-      <div className="bg-neutral-900/30 border border-white/5 rounded-2xl shadow-2xl backdrop-blur-sm overflow-hidden min-h-[300px]">
-        <table className="w-full text-sm text-left table-fixed">
-          <thead className="bg-neutral-900/60 text-neutral-400 border-b border-white/5">
-            <tr>
-              <th className="w-[45%] px-6 py-4 font-medium">Produs</th>
+      <div className="overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-sm">
+        <table className="w-full text-sm table-fixed">
+          <colgroup>
+            <col className="w-[45%]" />
+            <col className="w-[20%]" />
+            <col className="w-[20%]" />
+            <col className="w-[15%]" />
+          </colgroup>
+          <thead className="bg-neutral-50 border-b border-neutral-100">
+            <tr className="text-left text-neutral-500">
+              <th className="px-6 py-4 font-medium">Produs</th>
               <th
-                className="w-[15%] px-6 py-4 font-medium text-center cursor-pointer hover:text-white"
                 onClick={() => handleSort("price")}
+                className="px-4 py-4 text-center cursor-pointer hover:text-neutral-900"
               >
                 Preț USD ↕
               </th>
-              <th className="w-[20%] px-6 py-4 font-medium text-center">
-                Preț RON{" "}
-                {currentExchangeRate && (
-                  <span className="block text-[10px] text-slate-500">
-                    (Curs: {currentExchangeRate.toFixed(2)})
-                  </span>
-                )}
-              </th>
-              <th className="w-[20%] px-6 py-4 font-medium text-center">
-                Acțiuni
-              </th>
+              <th className="px-4 py-4 text-center font-medium">RON</th>
+              <th className="px-4 py-4 text-center">Acțiuni</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-neutral-100">
             {filteredAndSorted.map((p) => (
-              <tr
-                key={p.id}
-                className="hover:bg-white/[0.02] transition-colors align-top"
-              >
+              <tr key={p.id} className="hover:bg-neutral-50/50 transition">
                 <td className="px-6 py-4">
                   {editingId === p.id ? (
                     <input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="bg-neutral-950 border border-neutral-700 rounded-md px-3 py-1.5 w-full text-sm focus:outline-none"
+                      className="w-full p-2 rounded-lg border border-blue-200 bg-blue-50 text-neutral-900 font-medium outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   ) : (
-                    <div className="flex items-start space-x-4">
+                    <div className="flex items-center gap-3">
                       {p.imageUrl && (
                         <img
                           src={p.imageUrl}
-                          className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                          className="w-10 h-10 rounded-lg object-cover border border-neutral-100"
                         />
                       )}
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-medium truncate">{p.name}</span>
+                      <div className="min-w-0">
+                        <p className="font-medium text-neutral-900 truncate">
+                          {p.name}
+                        </p>
                         {p.description && (
-                          <span
+                          <p
                             onClick={() => toggleDescription(p.id)}
-                            className={`text-[11px] text-neutral-500 mt-1 cursor-pointer hover:text-neutral-400 transition-all ${expandedDescIds.includes(p.id) ? "whitespace-normal" : "truncate max-w-[280px]"}`}
+                            className={`text-xs text-neutral-500 mt-0.5 cursor-pointer ${expandedDescIds.includes(p.id) ? "whitespace-normal" : "truncate"}`}
                           >
                             {p.description}
-                          </span>
+                          </p>
                         )}
                       </div>
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4 text-center">
+                <td className="px-4 py-4 text-center text-neutral-900">
                   {editingId === p.id ? (
                     <input
                       type="number"
+                      step="0.01"
                       value={editPrice}
                       onChange={(e) => setEditPrice(parseFloat(e.target.value))}
-                      className="bg-neutral-950 border border-neutral-700 rounded-md px-3 py-1.5 w-20 text-center"
+                      className="w-24 p-2 rounded-lg border border-blue-200 bg-blue-50 text-center outline-none focus:ring-2 focus:ring-blue-400 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                   ) : (
                     `$${p.price.toFixed(2)}`
                   )}
                 </td>
-                <td className="px-6 py-4 text-center font-medium ">
-                  {p.priceRon?.toFixed(2)} RON
+                <td className="px-4 py-4 text-center text-neutral-600 font-medium">
+                  {p.priceRon?.toFixed(2)}
                 </td>
-                <td className="px-6 py-4 text-center">
-                  <div className="flex justify-center space-x-2">
+                <td className="px-4 py-4">
+                  <div className="flex items-center justify-center gap-2">
                     {editingId === p.id ? (
                       <button
                         onClick={() => handleSave(p.id)}
-                        className="text-emerald-400 text-xs"
+                        className="p-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition"
                       >
-                        Salvează
+                        <Check className="w-4 h-4" />
                       </button>
                     ) : (
                       <button
@@ -119,16 +121,16 @@ export default function ProductTable() {
                           setEditName(p.name);
                           setEditPrice(p.price);
                         }}
-                        className="text-indigo-400 text-xs"
+                        className="p-2 text-neutral-500 hover:bg-neutral-200 rounded-lg transition"
                       >
-                        Editează
+                        <Pencil className="w-4 h-4" />
                       </button>
                     )}
                     <button
                       onClick={() => handleDelete(p.id)}
-                      className="text-rose-400 text-xs"
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
                     >
-                      Șterge
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </td>

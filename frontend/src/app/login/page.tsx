@@ -29,45 +29,50 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-800 flex items-center justify-center p-6">
-      <div className="w-full max-w-sm p-8 rounded-2xl border border-slate-700/50 bg-slate-900/40 shadow-2xl backdrop-blur-md">
-        <h1 className="text-xl font-bold text-white mb-6 text-center tracking-wide">
-          Autentificare
-        </h1>
+    <main className="min-h-screen bg-[#f5f5f3] flex items-center justify-center p-6">
+      <div className="w-full max-w-md bg-white border border-black/5 rounded-[32px] p-10 shadow-[0_10px_40px_rgba(0,0,0,0.06)]">
+        <div className="mb-8">
+          <p className="text-sm text-neutral-500 mb-2">Bun venit înapoi</p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">
+            Autentificare
+          </h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               Utilizator
             </label>
+
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-neutral-950 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full h-12 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 text-sm text-neutral-900 outline-none transition focus:border-neutral-400 focus:bg-white"
               required
             />
           </div>
+
           <div>
-            <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               Parolă
             </label>
+
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-neutral-950 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full h-12 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 text-sm text-neutral-900 outline-none transition focus:border-neutral-400 focus:bg-white"
               required
             />
           </div>
 
-          {error && (
-            <p className="text-rose-500 text-xs mt-2 text-center">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-500 pt-1">{error}</p>}
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold py-2.5 rounded-lg transition-all shadow-lg mt-4"
+            className="w-full h-12 rounded-2xl bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800 transition-all"
           >
             Conectare
           </button>

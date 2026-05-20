@@ -3,18 +3,23 @@ import PdfUploader from "@/components/PdfUploader";
 
 export default function Dashboard() {
   return (
-    <main className="min-h-screen bg-neutral-950 flex flex-col justify-start items-center p-6 pt-24">
-      <div className="w-full max-w-4xl flex flex-col items-center gap-8">
-        <div className="w-full max-w-sm p-6 rounded-2xl border border-neutral-800 bg-neutral-900/30">
-          <h2 className="text-[10px] tracking-[0.2em] font-bold text-neutral-500 mb-4 uppercase text-center">
-            Procesare Factură
-          </h2>
+    <main className="min-h-screen bg-[#f5f5f3] px-6 py-10">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="bg-white rounded-[32px] border border-black/[0.04] shadow-[0_10px_40px_rgba(0,0,0,0.04)] p-8">
+          <div className="mb-6">
+            <h1 className="text-[34px] leading-none font-semibold tracking-tight text-neutral-900">
+              Procesare factură PDF
+            </h1>
+
+            <p className="text-neutral-500 mt-3 text-[15px]">
+              Încarcă factura pentru extragerea automată a produselor.
+            </p>
+          </div>
+
           <PdfUploader />
         </div>
 
-        <div className="w-full">
-          <ProductTable />
-        </div>
+        <ProductTable />
       </div>
     </main>
   );

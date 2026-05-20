@@ -26,12 +26,12 @@ public class PdfService {
             List<String[]> csvData = new ArrayList<>();
             csvData.add(new String[]{"Cod produs", "Nume produs", "Pret unitar", "Moneda", "Cantitate"});
 
+            String itemRegex = "^-?\\d+(\\.\\d+)?\\s+(RON|EUR|USD|LEI)\\s+-?\\d+(\\.\\d+)?.*";
+
             for (int i = 0; i < lines.length; i++) {
                 String line = lines[i].trim();
                 
-                if (line.contains("COMUTATOR PORNIRE")) {
-                    
-                
+                if (line.matches(itemRegex)) {
                     String[] parts = line.split("\\s+");
                     
                     String unitPrice = parts[0];  
@@ -43,8 +43,17 @@ public class PdfService {
                         productCode = lines[i + 1].trim();
                     }
 
-                    String productName = "COMUTATOR PORNIRE FEBI";
-                    log.info("Am extras: Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
+                    StringBuilder nameBuilder = new StringBuilder();
+                    for (int j = 7; j < parts.length; j++) {
+                        nameBuilder.append(parts[j]).append(" ");
+                    }
+                    
+                    String productName = nameBuilder.toString().trim();
+                    if (productName.matches(".*\\d+$")) {
+                        productName = productName.replaceAll("\\d+$", "").trim();
+                    }
+
+                    log.info("AM GASIT PRODUS DINAMIC: Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
                              productCode, productName, unitPrice, currency, quantity);
 
                     csvData.add(new String[]{productCode, productName, unitPrice, currency, quantity});

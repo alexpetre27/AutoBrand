@@ -33,7 +33,7 @@ export default function PdfUploader() {
         onClick={handleUpload}
         className="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg text-sm font-medium transition"
       >
-        Procesează Factura
+        Descarca factura
       </button>
     </div>
   );

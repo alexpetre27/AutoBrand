@@ -24,16 +24,17 @@ public class ScraperService {
 
     private final ProductRepository productRepository;
 
-    @PostConstruct 
+    @PostConstruct
     @Scheduled(cron = "0 0 12-18 * * *")
     public void runScraperHourly() {
-        log.info("Serviciul cron a inceput");
+        log.info("Cron a inceput");
+        productRepository.deleteAll();
         try {
             double exchangeRate = fetchUsdToRonRate();
             log.info("Cursul valutar: 1 USD = {} RON", exchangeRate);
 
             Connection.Response loginResponse = Jsoup.connect("https://www.web-scraping.dev/api/login")
-                    .data("username", "user123") 
+                    .data("username", "user123")
                     .data("password", "password")
                     .method(Connection.Method.POST)
                     .ignoreContentType(true)
@@ -50,45 +51,30 @@ public class ScraperService {
             for (Element element : productElements) {
                 String name = element.select("a").first() != null ? element.select("a").first().text() : "";
                 String priceText = element.select(".price").text();
-                String description = element.select(".shortDescription").text();
-                String imageUrl = element.select("img.imgThumbnail").attr("src");
+                String description = element.select(".short-description").text();
+                String imageUrl = element.select("img.img-thumbnail").attr("src");
 
                 String cleanPrice = priceText.replaceAll("[^0-9.]", "");
-                Double priceUsd = 0.0; 
-
-                if (!cleanPrice.isEmpty()) {
-                    priceUsd = Double.parseDouble(cleanPrice);
-                } else {
-                    log.warn("Nu am putut extrage prețul pentru produsul '{}'.", name);
-                }
-
+                Double priceUsd = cleanPrice.isEmpty() ? 0.0 : Double.parseDouble(cleanPrice);
                 Double priceRon = priceUsd * exchangeRate;
 
-                if (!name.isEmpty()) {
-                    if (productRepository.findByName(name).isEmpty()) {
-                        
-                        Product newProduct = Product.builder()
-                                .name(name)
-                                .price(priceUsd)         
-                                .priceRon(priceRon)    
-                                .exchangeRate(exchangeRate)  
-                                .description(description)
-                                .imageUrl(imageUrl)
-                                .build();
-                        
-                        productRepository.save(newProduct);
-                        log.info("Produs nou: {} | $: {} | RON: {} (Rată: {})", 
-                                 name, priceUsd, String.format("%.2Fi", priceRon), exchangeRate);
-                    } else {
-                        log.info("Produsul este deja în baza de date: {}", name);
-                    }
+                if (!name.isEmpty() && productRepository.findByName(name).isEmpty()) {
+                    Product newProduct = Product.builder()
+                            .name(name)
+                            .price(priceUsd)
+                            .priceRon(priceRon)
+                            .exchangeRate(exchangeRate)
+                            .description(description)
+                            .imageUrl(imageUrl)
+                            .build();
+
+                    productRepository.save(newProduct);
+                    log.info("SALVAT: {} | $: {} | RON: {}", name, priceUsd, String.format("%.2f", priceRon));
                 }
             }
-
-            log.info("Serviciul cron a fost finalizat");
-
+            log.info("Cron a fost finalizat");
         } catch (Exception e) {
-            log.error("A apărut o eroare în procesul de scraping sau de conversie", e);
+            log.error("Eroare în procesul de scraping sau de conversie", e);
         }
     }
 
@@ -102,8 +88,8 @@ public class ScraperService {
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
             return rootNode.path("rates").path("RON").asDouble();
         } catch (Exception e) {
-            log.warn("Nu am putut prelua cursul live, folosim valoarea de rezerva", e.getMessage());
-            return 4.55; 
+            log.warn("Nu am putut prelua cursul curent, folosim valoarea de rezerva");
+            return 4.55;
         }
     }
 }

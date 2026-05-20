@@ -10,15 +10,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:3000") 
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductRepository productRepository;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productRepository.findAll());
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    @GetMapping("/test-db")
+    public List<Product> testDb() {
+        return productRepository.findAll();
     }
 
     @PutMapping("/{id}")

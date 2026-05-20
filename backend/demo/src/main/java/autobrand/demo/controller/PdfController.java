@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/pdf")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class PdfController {
 

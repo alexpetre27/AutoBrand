@@ -33,20 +33,29 @@ public class PdfService {
                 
                 if (line.matches(itemRegex)) {
                     String[] parts = line.split("\\s+");
+                    
                     String unitPrice = parts[0];  
                     String currency = parts[1];    
                     String quantity = parts[2];   
+
                     String productCode = "Necunoscut";
-                    StringBuilder nameBuilder = new StringBuilder();
-                    String productName = nameBuilder.toString().trim();
-                    if (i + 1 < lines.length) 
+                    if (i + 1 < lines.length) {
                         productCode = lines[i + 1].trim();
-                    for (int j = 7; j < parts.length; j++) 
+                    }
+
+                    StringBuilder nameBuilder = new StringBuilder();
+                    for (int j = 7; j < parts.length; j++) {
                         nameBuilder.append(parts[j]).append(" ");
-                    if (productName.matches(".*\\d+$")) 
+                    }
+                    
+                    String productName = nameBuilder.toString().trim();
+                    if (productName.matches(".*\\d+$")) {
                         productName = productName.replaceAll("\\d+$", "").trim();
+                    }
+
                     log.info(" Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
                              productCode, productName, unitPrice, currency, quantity);
+
                     csvData.add(new String[]{productCode, productName, unitPrice, currency, quantity});
                 }
             }

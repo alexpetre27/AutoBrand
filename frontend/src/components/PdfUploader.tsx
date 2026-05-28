@@ -23,7 +23,6 @@ export default function PdfUploader() {
     <div className="space-y-4">
       <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-2">
         <div className="flex items-center justify-between gap-4">
-          {/* Am transformat label-ul într-un wrapper care ocupă tot spațiul disponibil pentru a crește hitbox-ul */}
           <label className="flex items-center gap-3 min-w-0 flex-1 cursor-pointer p-2 rounded-xl hover:bg-neutral-100 transition-colors">
             <input type="file" onChange={handleFileChange} className="hidden" />
 
@@ -43,7 +42,6 @@ export default function PdfUploader() {
             </div>
           </label>
 
-          {/* Butonul X rămâne în afara label-ului pentru a nu declanșa input-ul */}
           {selectedFileName && (
             <button
               onClick={clearFile}

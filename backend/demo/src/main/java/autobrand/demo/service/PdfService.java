@@ -36,22 +36,20 @@ public class PdfService {
                     
                     String unitPrice = parts[0];  
                     String currency = parts[1];    
-                    String quantity = parts[2];   
-
+                    String quantity = parts[2];                       
                     String productCode = "Necunoscut";
-                    if (i + 1 < lines.length) {
-                        productCode = lines[i + 1].trim();
-                    }
-
                     StringBuilder nameBuilder = new StringBuilder();
-                    for (int j = 7; j < parts.length; j++) {
+                    if (i + 1 < lines.length)
+                        productCode = lines[i + 1].trim();
+                    
+
+                    for (int j = 7; j < parts.length; j++) 
                         nameBuilder.append(parts[j]).append(" ");
-                    }
                     
                     String productName = nameBuilder.toString().trim();
-                    if (productName.matches(".*\\d+$")) {
+
+                    if (productName.matches(".*\\d+$")) 
                         productName = productName.replaceAll("\\d+$", "").trim();
-                    }
 
                     log.info(" Cod: {} | Nume: {} | Preț: {} | Monedă: {} | Cantitate: {}", 
                              productCode, productName, unitPrice, currency, quantity);

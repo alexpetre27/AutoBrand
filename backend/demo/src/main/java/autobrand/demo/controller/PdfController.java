@@ -18,11 +18,9 @@ public class PdfController {
     @PostMapping("/upload")
     public ResponseEntity<byte[]> uploadPdfAndGetCsv(@RequestParam("file") MultipartFile file) {
         String csvContent = pdfService.processPdfAndGenerateCsv(file);
-
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=produseExtrase.csv");
         headers.setContentType(MediaType.parseMediaType("text/csv"));
-
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(csvContent.getBytes());

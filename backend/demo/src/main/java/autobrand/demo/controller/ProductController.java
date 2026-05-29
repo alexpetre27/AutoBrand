@@ -20,10 +20,6 @@ public class ProductController {
         return productRepository.findAll();
     }
 
-    @GetMapping("/test-db")
-    public List<Product> testDb() {
-        return productRepository.findAll();
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {

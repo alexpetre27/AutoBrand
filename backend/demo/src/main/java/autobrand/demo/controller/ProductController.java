@@ -26,8 +26,11 @@ public class ProductController {
         return productRepository.findById(id)
                 .map(existingProduct -> {
                     existingProduct.setName(updatedProduct.getName());
-                    existingProduct.setPrice(updatedProduct.getPrice());
-                    existingProduct.setDescription(updatedProduct.getDescription());
+existingProduct.setPrice(updatedProduct.getPrice());
+existingProduct.setDescription(updatedProduct.getDescription());
+
+Double newPriceRon = updatedProduct.getPrice() * existingProduct.getExchangeRate();
+existingProduct.setPriceRon(newPriceRon);
                     productRepository.save(existingProduct);
                     return ResponseEntity.ok(existingProduct);
                 })
